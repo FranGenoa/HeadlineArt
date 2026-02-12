@@ -1,6 +1,6 @@
-# Instagram Art Quadro — Multi-Agent Pipeline
+# HeadlineArt — Multi-Agent Pipeline
 
-A spec-driven, 7-agent workflow that transforms daily news into Instagram-ready art — including actual image generation — using Microsoft Agent Framework and Azure AI Foundry.
+A spec-driven, 7-agent workflow that transforms daily news into art — including actual image generation — using Microsoft Agent Framework and Azure AI Foundry.
 
 ## Architecture
 
@@ -135,7 +135,7 @@ The Image Creator agent uses **gpt-image-1.5** via `AsyncAzureOpenAI` with Entra
 ## Project Structure
 
 ```
-instagram-art-quadro/
+HeadlineArt/
 ├── app.py                          # Main 7-agent workflow + HTTP server
 ├── requirements.txt                # Pinned dependencies
 ├── .env.sample                     # Environment template (safe to commit)

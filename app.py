@@ -1,7 +1,7 @@
 """
-Instagram Art Quadro Pipeline — Multi-Agent Workflow
+HeadlineArt Pipeline — Multi-Agent Workflow
 
-A 7-agent pipeline that transforms daily news into Instagram-ready art:
+A 7-agent pipeline that transforms daily news into art:
   News Scout → News Analyst → Creative Director → Art Generator → Copywriter → Quality Reviewer → Image Creator
 
 Uses Microsoft Agent Framework with spec-driven agent definitions.
@@ -341,7 +341,7 @@ class ImageCreatorExecutor(Executor):
             role=Role.USER,
             text=(
                 "Based on the entire conversation above, create a SHORT image generation "
-                "prompt (max 150 words) for creating the Instagram art quadro. "
+                "prompt (max 150 words) for creating the HeadlineArt artwork. "
                 "IMPORTANT RULES:\n"
                 "- Describe ONLY abstract art, colors, shapes, textures, and artistic styles\n"
                 "- Do NOT mention any real people, public figures, brands, or company names\n"
@@ -457,7 +457,7 @@ class ImageCreatorExecutor(Executor):
                     break
 
         final_output = (
-            f"=== INSTAGRAM ART QUADRO — FINAL PACKAGE ===\n\n"
+            f"=== HEADLINEART — FINAL PACKAGE ===\n\n"
             f"Image: {image_path_str}\n"
             f"Prompt: {image_prompt[:300]}\n\n"
             f"{approved_text}"
