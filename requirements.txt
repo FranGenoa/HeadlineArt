@@ -1,0 +1,17 @@
+# Core SDK — pin to avoid breaking changes
+agent-framework-azure-ai==1.0.0b260107
+agent-framework-core==1.0.0b260107
+
+# HTTP server for Agent-as-Server pattern
+azure-ai-agentserver-agentframework==1.0.0b10
+azure-ai-agentserver-core==1.0.0b10
+
+# Azure identity
+azure-identity
+
+# Environment variables
+python-dotenv
+
+# Debugging
+debugpy
+agent-dev-cli
