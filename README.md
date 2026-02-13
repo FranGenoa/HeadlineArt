@@ -6,7 +6,7 @@ A spec-driven, 7-agent workflow that transforms daily news into art — includin
 
 ```
 Input (trigger)
-    → News Scout         — Scans news sources, collects top stories
+    → News Scout         — Searches the web via Bing Grounding for real-time news
     → News Analyst       — Filters, ranks, identifies themes
     → Creative Director  — Creates art concept brief
     → Art Generator      — Produces image generation prompts
@@ -24,7 +24,7 @@ Each agent's behavior is defined in a spec file under `specs/`:
 
 | # | Agent | Spec | Purpose |
 |---|-------|------|---------|
-| 1 | News Scout | `specs/01_news_scout.md` | Collect 5–10 visually compelling daily news stories |
+| 1 | News Scout | `specs/01_news_scout.md` | Search the web for today's most compelling stories (via Bing Grounding) |
 | 2 | News Analyst | `specs/02_news_analyst.md` | Curate top 3 stories, identify unifying theme |
 | 3 | Creative Director | `specs/03_creative_director.md` | Design art concept with style, palette, symbolism |
 | 4 | Art Generator | `specs/04_art_generator.md` | Create optimized image generation prompts |
@@ -36,6 +36,7 @@ Each agent's behavior is defined in a spec file under `specs/`:
 
 - **Microsoft Agent Framework** (`agent-framework-core`, `agent-framework-azure-ai`) — workflow orchestration
 - **Azure AI Foundry** — model hosting (gpt-4.1 for text agents, gpt-image-1.5 for image generation)
+- **Bing Grounding** — real-time web search for the News Scout agent
 - **Entra ID (DefaultAzureCredential)** — token-based authentication (no API keys)
 - **AsyncAzureOpenAI** — async client for image generation API
 - **agentdev CLI** — HTTP server + debugging with AI Toolkit Agent Inspector
@@ -47,6 +48,7 @@ Each agent's behavior is defined in a spec file under `specs/`:
 - Python 3.10+
 - An Azure AI Foundry project with **gpt-4.1** deployed
 - An Azure OpenAI resource with **gpt-image-1.5** deployed
+- A **Grounding with Bing Search** connection in your Azure AI Foundry project (optional but recommended)
 - Azure CLI logged in (`az login`) with access to both resources
 
 ### 2. Configure environment
@@ -65,6 +67,10 @@ FOUNDRY_MODEL_DEPLOYMENT_NAME=gpt-4.1
 # Image generation — gpt-image-1.5
 FOUNDRY_IMAGE_MODEL_DEPLOYMENT_NAME=gpt-image-1.5
 FOUNDRY_IMAGE_ENDPOINT=https://<your-resource>.cognitiveservices.azure.com/
+
+# Bing Grounding — real-time web search for News Scout (optional)
+# Get from: Azure AI Foundry > Connected resources > Grounding with Bing Search
+BING_CONNECTION_ID=<your-bing-connection-id>
 ```
 
 > **Note:** Authentication uses `DefaultAzureCredential` (Entra ID). No API keys are needed — just make sure you are logged in with `az login`.
@@ -103,7 +109,7 @@ The launch configuration is pre-configured in `.vscode/launch.json` and `.vscode
 ## How It Works
 
 1. Send a message like *"Scan today's news and create an art quadro"*
-2. The **News Scout** gathers stories from its training knowledge
+2. The **News Scout** searches the web via Bing Grounding for today's top stories
 3. The **News Analyst** curates the top 3 with visual potential
 4. The **Creative Director** designs an art concept brief (style, palette, symbolism)
 5. The **Art Generator** produces optimized image generation prompts
@@ -159,6 +165,5 @@ HeadlineArt/
 
 - **Add tracing** — Monitor agent interactions and latency with OpenTelemetry
 - **Add evaluation** — Measure quality consistency across runs
-- **Connect real news APIs** — Add a tool/function call for live news fetching
 - **Schedule daily runs** — Automate with Azure Functions or cron
 - **Post to Instagram** — Integrate Instagram Graph API to publish directly

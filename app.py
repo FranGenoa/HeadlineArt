@@ -45,6 +45,7 @@ ENDPOINT = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
 MODEL = os.environ.get("FOUNDRY_MODEL_DEPLOYMENT_NAME", "")
 IMAGE_MODEL = os.environ.get("FOUNDRY_IMAGE_MODEL_DEPLOYMENT_NAME", "gpt-image-1.5")
 IMAGE_ENDPOINT = os.environ.get("FOUNDRY_IMAGE_ENDPOINT", "")
+BING_CONNECTION_ID = os.environ.get("BING_CONNECTION_ID", "")
 SPECS_DIR = Path(__file__).parent / "specs"
 OUTPUT_DIR = Path(__file__).parent / "generated_images"
 
@@ -486,16 +487,29 @@ async def build_workflow():
     )
 
     # Create 7 AzureAI clients + agents, each with spec-driven instructions
-    async def create_agent(spec_file: str, name: str) -> ChatAgent:
+    async def create_agent(spec_file: str, name: str, tools: list | None = None) -> ChatAgent:
         instructions = _load_spec(spec_file)
         client = AzureAIClient(
             project_endpoint=ENDPOINT,
             model_deployment_name=MODEL,
             credential=credential,
         )
-        return client.create_agent(name=name, instructions=instructions)
+        kwargs: dict = {"name": name, "instructions": instructions}
+        if tools:
+            kwargs["tools"] = tools
+        return client.create_agent(**kwargs)
 
-    news_scout_agent = await create_agent("01_news_scout.md", "NewsScout")
+    # Create Bing Grounding search tool for real-time news
+    bing_tools: list | None = None
+    if BING_CONNECTION_ID:
+        from agent_framework.azure import AzureAIClient as _AzureAIClient
+        bing_search_tool = _AzureAIClient.get_web_search_tool(bing_connection_id=BING_CONNECTION_ID)
+        bing_tools = [bing_search_tool]
+        print(f"[Setup] Bing Grounding enabled for NewsScout (connection: {BING_CONNECTION_ID[:40]}...)")
+    else:
+        print("[Setup] BING_CONNECTION_ID not set — NewsScout will use LLM knowledge only (no live web search)")
+
+    news_scout_agent = await create_agent("01_news_scout.md", "NewsScout", tools=bing_tools)
     news_analyst_agent = await create_agent("02_news_analyst.md", "NewsAnalyst")
     creative_director_agent = await create_agent("03_creative_director.md", "CreativeDirector")
     art_generator_agent = await create_agent("04_art_generator.md", "ArtGenerator")
